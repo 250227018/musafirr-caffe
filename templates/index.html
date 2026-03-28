@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Musafirr Caffe</title>
+</head>
+
+<body>
+
+    <h1>☕ Musafirr Caffe</h1>
+    <p>Apna naam likho:</p>
+    <input type="text" id="name" placeholder="Tumhara naam..." />
+
+    <h2>Menu</h2>
+    <div id="menu"></div>
+
+    <h2>🛒 Tumhara Order</h2>
+    <div id="cart"></div>
+    <h3>Total: ₹<span id="total">0</span></h3>
+    <button onclick="placeOrder()">Order Karo</button>
+
+    <script>
+        const MENU = {{ menu | tojson }};
+        let cart = {};
+
+        function buildMenu() {
+            let html = '';
+            for (let cat in MENU) {
+                html += `<h3>${cat}</h3>`;
+                MENU[cat].forEach(item => {
+                    html += `
+            <div>
+              ${item.emoji} <b>${item.name}</b> — ₹${item.price}
+              <button onclick='add(${JSON.stringify(item)})'>+ Add</button>
+            </div>`;
+                });
+            }
+            document.getElementById('menu').innerHTML = html;
+        }
+
+        function add(item) {
+            if (cart[item.id]) cart[item.id].qty++;
+            else cart[item.id] = { ...item, qty: 1 };
+            renderCart();
+        }
+
+        function renderCart() {
+            let html = '';
+            let total = 0;
+            for (let id in cart) {
+                let i = cart[id];
+                total += i.price * i.qty;
+                html += `<div>${i.emoji} ${i.name} x${i.qty} = ₹${i.price * i.qty}</div>`;
+            }
+            document.getElementById('cart').innerHTML = html || 'Kuch nahi add kiya';
+            document.getElementById('total').textContent = total;
+        }
+
+        function placeOrder() {
+            let items = Object.values(cart);
+            if (items.length === 0) { alert('Pehle kuch add karo!'); return; }
+            let name = document.getElementById('name').value || 'Guest';
+            alert(`Shukriya ${name}! Tumhara order place ho gaya ✅`);
+        }
+
+        buildMenu();
+    </script>
+
+</body>
+
+</html>
