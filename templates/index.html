@@ -265,8 +265,122 @@
     </div>
 
     <div class="main">
-
         <div class="menu-section">
             <h2>✦ Menu ✦</h2>
             <div id="menuContainer"></div>
         </div>
+
+        <div class="cart-panel">
+            <h2>🛒 Tumhara Order</h2>
+            <div id="cartItems">
+                <div class="cart-empty">Kuch add nahi kiya abhi!</div>
+            </div>
+            <div class="total-box">
+                <div class="gst-info">Subtotal</div>
+                <div class="total-amt">₹<span id="subtotal">0</span></div>
+                <div class="gst-info">+ 5% GST = ₹<span id="gst">0</span></div>
+                <hr style="border-color:#d4852a44; margin:10px 0" />
+                <div style="color:#d4852a; font-size:13px;">Grand Total</div>
+                <div class="total-amt">₹<span id="total">0</span></div>
+            </div>
+            <button class="order-btn" onclick="placeOrder()">ORDER KARO</button>
+            <button class="clear-btn" onclick="clearCart()">CART CLEAR KARO</button>
+        </div>
+    </div>
+
+    <footer>☕ Musafirr Caffe · Mau, UP · Where every stranger finds a seat</footer>
+
+    <script>
+        const MENU = {{ menu | tojson }};
+        let cart = {};
+
+        function buildMenu() {
+            let html = '';
+            for (let cat in MENU) {
+                html += `<div class="category"><h3>${cat}</h3><div class="menu-grid">`;
+                MENU[cat].forEach(item => {
+                    html += `
+          <div class="menu-card">
+            <div class="emoji">${item.emoji}</div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">₹${item.price}</div>
+            <button class="add-btn" onclick='add(${JSON.stringify(item)})'>+ Add</button>
+          </div>`;
+                });
+                html += `</div></div>`;
+            }
+            document.getElementById('menuContainer').innerHTML = html;
+        }
+
+        function add(item) {
+            if (cart[item.id]) cart[item.id].qty++;
+            else cart[item.id] = { ...item, qty: 1 };
+            renderCart();
+        }
+
+        function changeQty(id, delta) {
+            if (!cart[id]) return;
+            cart[id].qty += delta;
+            if (cart[id].qty <= 0) delete cart[id];
+            renderCart();
+        }
+
+        function removeItem(id) {
+            delete cart[id];
+            renderCart();
+        }
+
+        function clearCart() {
+            cart = {};
+            renderCart();
+        }
+
+        function renderCart() {
+            let html = '';
+            let subtotal = 0;
+            const items = Object.values(cart);
+
+            if (items.length === 0) {
+                document.getElementById('cartItems').innerHTML = '<div class="cart-empty">Kuch add nahi kiya abhi!</div>';
+                updateTotals(0);
+                return;
+            }
+
+            items.forEach(i => {
+                subtotal += i.price * i.qty;
+                html += `<div class="cart-item">
+        <span>${i.emoji} ${i.name}</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button onclick="changeQty(${i.id}, -1)" style="background:#d4852a; border:none; color:#1a0a00; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:16px;">−</button>
+          <span style="color:#f0b840; font-weight:bold; min-width:16px; text-align:center;">${i.qty}</span>
+          <button onclick="changeQty(${i.id}, 1)" style="background:#d4852a; border:none; color:#1a0a00; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:16px;">+</button>
+          <button onclick="removeItem(${i.id})" style="background:#c0392b; border:none; color:white; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:12px;">✕</button>
+        </div>
+      </div>`;
+            });
+
+            document.getElementById('cartItems').innerHTML = html;
+            updateTotals(subtotal);
+        }
+
+        function updateTotals(subtotal) {
+            const gst = Math.round(subtotal * 0.05);
+            document.getElementById('subtotal').textContent = subtotal;
+            document.getElementById('gst').textContent = gst;
+            document.getElementById('total').textContent = subtotal + gst;
+        }
+
+        function placeOrder() {
+            const items = Object.values(cart);
+            if (items.length === 0) { alert('Pehle kuch add karo!'); return; }
+            const name = document.getElementById('name').value || 'Guest';
+            alert(`Shukriya ${name}! Tumhara order place ho gaya ✅`);
+            cart = {};
+            renderCart();
+        }
+
+        buildMenu();
+    </script>
+</body>
+
+</html>
