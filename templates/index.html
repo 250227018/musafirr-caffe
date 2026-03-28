@@ -17,7 +17,6 @@
             min-height: 100vh;
         }
 
-        /* HEADER */
         .header {
             text-align: center;
             padding: 40px 20px 20px;
@@ -38,7 +37,6 @@
             font-size: 16px;
         }
 
-        /* NAME INPUT */
         .name-box {
             text-align: center;
             padding: 24px;
@@ -64,7 +62,6 @@
             outline: none;
         }
 
-        /* LAYOUT */
         .main {
             display: flex;
             gap: 30px;
@@ -74,7 +71,6 @@
             align-items: start;
         }
 
-        /* MENU */
         .menu-section {
             flex: 1;
         }
@@ -97,7 +93,6 @@
             border-bottom: 1px solid #d4852a44;
             padding-bottom: 8px;
             margin-bottom: 14px;
-            letter-spacing: 1px;
         }
 
         .menu-grid {
@@ -154,7 +149,6 @@
             background: #f0b840;
         }
 
-        /* CART */
         .cart-panel {
             width: 300px;
             background: #2a1200;
@@ -190,7 +184,6 @@
             padding: 20px 0;
         }
 
-        /* TOTAL BOX */
         .total-box {
             background: #3d1a00;
             border-radius: 8px;
@@ -230,7 +223,24 @@
             background: #f0b840;
         }
 
-        /* FOOTER */
+        .clear-btn {
+            width: 100%;
+            background: transparent;
+            color: #c0392b;
+            border: 1px solid #c0392b;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: #c0392b;
+            color: white;
+        }
+
         footer {
             text-align: center;
             padding: 24px;
@@ -244,116 +254,19 @@
 
 <body>
 
-    <!-- HEADER -->
     <div class="header">
         <h1>☕ Musafirr Caffe</h1>
         <p>"Every sip is a journey, every bite is a memory"</p>
     </div>
 
-    <!-- NAME -->
     <div class="name-box">
         <label>APNA NAAM LIKHO</label>
         <input type="text" id="name" placeholder="Tumhara naam..." />
     </div>
 
-    <!-- MAIN -->
     <div class="main">
 
-        <!-- MENU -->
         <div class="menu-section">
             <h2>✦ Menu ✦</h2>
             <div id="menuContainer"></div>
-        </div>
-
-        <!-- CART -->
-        <div class="cart-panel">
-            <h2>🛒 Tumhara Order</h2>
-            <div id="cartItems">
-                <div class="cart-empty">Kuch add nahi kiya abhi!</div>
-            </div>
-            <div class="total-box">
-                <div class="gst-info">Subtotal</div>
-                <div class="total-amt">₹<span id="subtotal">0</span></div>
-                <div class="gst-info">+ 5% GST = ₹<span id="gst">0</span></div>
-                <hr style="border-color:#d4852a44; margin:10px 0" />
-                <div style="color:#d4852a; font-size:13px;">Grand Total</div>
-                <div class="total-amt">₹<span id="total">0</span></div>
-            </div>
-            <button class="order-btn" onclick="placeOrder()">ORDER KARO</button>
-        </div>
-
-    </div>
-
-    <footer>☕ Musafirr Caffe · Mau, UP · Where every stranger finds a seat</footer>
-
-    <script>
-        const MENU = {{ menu | tojson }};
-        let cart = {};
-
-        function buildMenu() {
-            let html = '';
-            for (let cat in MENU) {
-                html += `<div class="category"><h3>${cat}</h3><div class="menu-grid">`;
-                MENU[cat].forEach(item => {
-                    html += `
-          <div class="menu-card">
-            <div class="emoji">${item.emoji}</div>
-            <div class="item-name">${item.name}</div>
-            <div class="item-price">₹${item.price}</div>
-            <button class="add-btn" onclick='add(${JSON.stringify(item)})'>+ Add</button>
-          </div>`;
-                });
-                html += `</div></div>`;
-            }
-            document.getElementById('menuContainer').innerHTML = html;
-        }
-
-        function add(item) {
-            if (cart[item.id]) cart[item.id].qty++;
-            else cart[item.id] = { ...item, qty: 1 };
-            renderCart();
-        }
-
-        function renderCart() {
-            let html = '';
-            let subtotal = 0;
-            const items = Object.values(cart);
-
-            if (items.length === 0) {
-                document.getElementById('cartItems').innerHTML = '<div class="cart-empty">Kuch add nahi kiya abhi!</div>';
-                updateTotals(0); return;
-            }
-
-            items.forEach(i => {
-                subtotal += i.price * i.qty;
-                html += `<div class="cart-item">
-        <span>${i.emoji} ${i.name} x${i.qty}</span>
-        <span style="color:#f0b840">₹${i.price * i.qty}</span>
-      </div>`;
-            });
-
-            document.getElementById('cartItems').innerHTML = html;
-            updateTotals(subtotal);
-        }
-
-        function updateTotals(subtotal) {
-            const gst = Math.round(subtotal * 0.05);
-            document.getElementById('subtotal').textContent = subtotal;
-            document.getElementById('gst').textContent = gst;
-            document.getElementById('total').textContent = subtotal + gst;
-        }
-
-        function placeOrder() {
-            const items = Object.values(cart);
-            if (items.length === 0) { alert('Pehle kuch add karo!'); return; }
-            const name = document.getElementById('name').value || 'Guest';
-            alert(`Shukriya ${name}! Tumhara order place ho gaya ✅`);
-            cart = {};
-            renderCart();
-        }
-
-        buildMenu();
-    </script>
-</body>
-
-</html>
+            </di
